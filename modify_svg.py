@@ -225,7 +225,7 @@ def load_theme_colors(theme = None) -> dict:
     color_mapping = {}
 
     for theme in config:
-        color_mapping['theme'] = {key: f"#{value}" for key, value in config[theme].items()}
+        color_mapping[theme] = {key: f"#{value}" for key, value in config[theme].items()}
     return color_mapping
 
 def load_color_mapping() -> dict:
@@ -233,10 +233,11 @@ def load_color_mapping() -> dict:
     config = configparser.ConfigParser()
     config.read(themes_file)
 
+    color_mapping = dict(config['color.mapping'])
     # Get mapping from theme file 
     theme_colors = load_theme_colors(theme=None)
     for theme in theme_colors:
-        color_mapping.update({f"#{value}":key  for key, value in config[theme].items()})
+        color_mapping.update({f"#{value}":key  for key, value in theme_colors[theme].items()})
     return color_mapping
 
 
