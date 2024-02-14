@@ -164,11 +164,13 @@ def replace_color(tree, color_mapping):
         else:
             classes = set([c.strip() for c in classes.split(" ")])
         if fill_attr.is_set  and fill_attr.value in color_mapping:
-            classes.add(f"fill-{color_mapping[fill_attr.value]}")
+            classes = [c for c in classes if not c.startswith('fill')]
+            classes.append(f"fill-{color_mapping[fill_attr.value]}")
             if 'fill' in element.attrib:
                 del element.attrib["fill"]
         if stroke_attr.is_set and stroke_attr.value in color_mapping:
-            classes.add(f"stroke-{color_mapping[stroke_attr.value]}")
+            classes = [c for c in classes if not c.startswith('stroke')]
+            classes.append(f"stroke-{color_mapping[stroke_attr.value]}")
             if 'stroke' in element.attrib:
                 del element.attrib["stroke"]
         if len(classes) > 0:
@@ -233,11 +235,12 @@ def load_color_mapping() -> dict:
     config = configparser.ConfigParser()
     config.read(themes_file)
 
-    color_mapping = dict(config['color.mapping'])
+    color_mapping = {f"#{key}": value for key, value in config['color.mapping'].items()}
+
     # Get mapping from theme file 
     theme_colors = load_theme_colors(theme=None)
     for theme in theme_colors:
-        color_mapping.update({f"#{value}":key  for key, value in theme_colors[theme].items()})
+        color_mapping.update({value:key  for key, value in theme_colors[theme].items()})
     return color_mapping
 
 
