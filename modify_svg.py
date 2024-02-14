@@ -125,6 +125,9 @@ def replace_color(tree, color_mapping):
         if style_attr == "":
             return ""
         for style in style_attr.split(";"):
+            if style == "":
+                continue
+
             attr, value = style.split(":")
             attr = attr.strip()
             value = value.strip()
